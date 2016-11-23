@@ -55,6 +55,8 @@ boost::shared_ptr<PUReweighter> reweighter;
 TFile* PUFile;
 bool EXIT = false;
 
+//bool mDoMCComparison = false;
+
 GammaJetFinalizer::GammaJetFinalizer() {
   mPUWeight = 1.;
   mNoPUReweighting = false; // do not PUReweighting
@@ -321,9 +323,10 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_rho = analysisDir.make<TH1F>("rho", "rho", 100, 0, 50);
   TH1F* h_hadTowOverEm = analysisDir.make<TH1F>("hadTowOverEm", "hadTowOverEm", 100, 0, 0.05);
   TH1F* h_sigmaIetaIeta = analysisDir.make<TH1F>("sigmaIetaIeta", "sigmaIetaIeta", 100, 0, 0.011);
-  TH1F* h_chargedHadronsIsolation = analysisDir.make<TH1F>("chargedHadronsIsolation", "chargedHadronsIsolation", 100, 0, 2);
+  TH1F* h_chargedHadronsIsolation = analysisDir.make<TH1F>("chargedHadronsIsolation", "chargedHadronsIsolation", 100, 0, 1);
   TH1F* h_neutralHadronsIsolation = analysisDir.make<TH1F>("neutralHadronsIsolation", "neutralHadronsIsolation", 100, 0, 100);
   TH1F* h_photonIsolation = analysisDir.make<TH1F>("photonIsolation", "photonIsolation", 100, 0, 15);
+  TH1F* h_R9 = analysisDir.make<TH1F>("R9", "R9", 100, 0, 1);
 
   TH1F* h_deltaPhi_passedID = analysisDir.make<TH1F>("deltaPhi_passedID", "deltaPhi", 40, M_PI / 2, M_PI);
 
@@ -384,9 +387,10 @@ void GammaJetFinalizer::runAnalysis() {
   TH1F* h_rho_passedID = analysisDir.make<TH1F>("rho_passedID", "rho", 100, 0, 50);
   TH1F* h_hadTowOverEm_passedID = analysisDir.make<TH1F>("hadTowOverEm_passedID", "hadTowOverEm", 100, 0, 0.05);
   TH1F* h_sigmaIetaIeta_passedID = analysisDir.make<TH1F>("sigmaIetaIeta_passedID", "sigmaIetaIeta", 100, 0, 0.011);
-  TH1F* h_chargedHadronsIsolation_passedID = analysisDir.make<TH1F>("chargedHadronsIsolation_passedID", "chargedHadronsIsolation", 100, 0, 2.0);
+  TH1F* h_chargedHadronsIsolation_passedID = analysisDir.make<TH1F>("chargedHadronsIsolation_passedID", "chargedHadronsIsolation", 100, 0, 1.0);
   TH1F* h_neutralHadronsIsolation_passedID = analysisDir.make<TH1F>("neutralHadronsIsolation_passedID", "neutralHadronsIsolation", 100, 0, 100);
   TH1F* h_photonIsolation_passedID = analysisDir.make<TH1F>("photonIsolation_passedID", "photonIsolation", 100, 0, 15);
+  TH1F* h_R9_passedID = analysisDir.make<TH1F>("R9_passedID", "R9", 100, 0, 1);
 
   TH2F* h_METvsfirstJet = analysisDir.make<TH2F>("METvsfirstJet", "MET vs firstJet", 150, 0., 300., 150, 0., 500.);
   TH2F* h_firstJetvsSecondJet = analysisDir.make<TH2F>("firstJetvsSecondJet", "firstJet vs secondJet", 60, 5., 100., 60, 5., 100.);
@@ -450,7 +454,10 @@ void GammaJetFinalizer::runAnalysis() {
   // |eta| < 1.3 --- for the others? --- vector of TProfile!
   TProfile* Profile_photon_SCPt_vs_Pt = analysisDir.make<TProfile>("PhotSCPt_vs_Pt", "SCPt vs Pt", binnum, ptBins, 0, 2000); 
   TH2F* h_photon_SCPt_vs_Pt = analysisDir.make<TH2F>("PhotonSCPt_vs_Pt", "SCPt vs Pt", binnum, ptBins, 200, 0, 2000);  
- 
+
+  TProfile* Profile_CorrOverRaw_vs_RawPt_eta0013 = analysisDir.make<TProfile>("CorrOverRaw_vs_RawPt_eta0013", "Corr/Raw vs RawPt", binnum, ptBins, 0, 2);
+  TProfile* Profile_CorrOverRaw_vs_CorrPt_eta0013 = analysisDir.make<TProfile>("CorrOverRaw_vs_CorrPt_eta0013", "Corr/Raw vs CorrPt", binnum, ptBins, 0, 2);
+
   //////////////////////////////////////////////////// Extrapolation
   int extrapolationBins = 50;
   double extrapolationMin = 0.;
@@ -522,8 +529,8 @@ void GammaJetFinalizer::runAnalysis() {
   // Loop -- from = 0, to = totalEvents
   for (uint64_t i = from; i < to; i++) {     
       
-    //test: skip bug events in MC
-    // if( i < 3194920 ) continue;
+    // test: skip bug events in MC
+    // if( i < 3160152) continue;
       
     if ( (i - from) < 10 || (i - from) % 50000 == 0) { //50000
       clock::time_point end = clock::now();
@@ -534,7 +541,7 @@ void GammaJetFinalizer::runAnalysis() {
     
     //bug in crab outputs -- skip events with bugs
     if( mIsMC ){ // bug in GJET Pythia
-      if ( i == 475910 || i == 1215426 || i == 2634046 || i == 3016299 || i == 3194920) continue;
+      if( i == 469664 || i == 1201210 || i == 2605350 || i == 2983481 || i == 3160152) continue;
     }
     
     if (EXIT) {
@@ -565,10 +572,10 @@ void GammaJetFinalizer::runAnalysis() {
       
     misc.GetEntry(i);
       
-    // if you want analyze a run range
+    // if you want to analyze a run range
     //    if( !mIsMC && analysis.run>274315 ) continue;
       
-    //skip all events -- usefull to check the crab output
+    // skip all events -- usefull to check the crab output
     // if ( photon.is_present || firstJet.is_present || !photon.is_present || !firstJet.is_present)  continue;
 
     if(mVerbose) std::cout<< std::endl;          
@@ -578,6 +585,12 @@ void GammaJetFinalizer::runAnalysis() {
       continue;      
     passedPhotonJetCut++; 
     if(mVerbose)        std::cout<<" passedPhotonJetPresence  " << std::endl;    
+
+    // if ( fabs(photon.eta)>0.8 )
+    //  continue;
+    
+    // if ( fabs(photon.eta)<=0.8 || fabs(photon.eta)>1.3 )
+    // continue;
 
     /* // test: simulated saturation
     // std::cout<<"H/E = " << photon.hadTowOverEm << std::endl;    
@@ -751,6 +764,13 @@ void GammaJetFinalizer::runAnalysis() {
       passedAlphaCut++;    
     if(mVerbose) std::cout << "secondJetOK "<< std::endl; 
     
+    //    if (mDoMCComparison) { 
+    //    //Lowest unprescaled trigger @ this pT
+    //      if (photon.pt < 200.)
+    //	continue;
+    //    }
+    
+
 #if ADD_TREES
     if (mUncutTrees) {
       photonTree->Fill();
@@ -808,7 +828,8 @@ void GammaJetFinalizer::runAnalysis() {
     h_chargedHadronsIsolation    ->Fill(photon.chargedHadronsIsolation, eventWeight);
     h_neutralHadronsIsolation     ->Fill(photon.neutralHadronsIsolation, eventWeight);
     h_photonIsolation                  ->Fill(photon.photonIsolation, eventWeight);
-    
+    h_R9      ->Fill(photon.r9, eventWeight);
+
     // Compute values for JET RESPONSE
     // MPF
     deltaPhi_Photon_MET = reco::deltaPhi(photon.phi, MET.phi);
@@ -839,6 +860,8 @@ void GammaJetFinalizer::runAnalysis() {
     if( mIsMC )    respGenPhot = firstGenJet.pt / photon.pt; // used to constrain extrapolation fits // no more
     if( mIsMC )    respPhotGamma = photon.pt / genPhoton.pt; // to check photon response
 
+    respCorrOverRaw = firstJet.pt / firstRawJet.pt ;
+
     int ptBin = mPtBinning.getPtBin(photon.pt);
     if (ptBin < 0) {
       if(mVerbose) std::cout << "Photon pt " << photon.pt << " is not covered by our pt binning. Dumping event." << std::endl;
@@ -868,6 +891,7 @@ void GammaJetFinalizer::runAnalysis() {
         h_chargedHadronsIsolation_passedID     -> Fill(photon.chargedHadronsIsolation, eventWeight);
         h_neutralHadronsIsolation_passedID      -> Fill(photon.neutralHadronsIsolation, eventWeight);
         h_photonIsolation_passedID                   -> Fill(photon.photonIsolation, eventWeight);
+	h_R9_passedID      -> Fill(photon.r9, eventWeight);
 
         h_ptFirstJet_passedID       -> Fill(firstJet.pt, eventWeight);
 	h_EtaFirstJet_passedID     -> Fill(firstJet.eta, eventWeight);
@@ -906,6 +930,10 @@ void GammaJetFinalizer::runAnalysis() {
 	if (fabs(firstJet.eta) <1.305) { //only the special case now
 	  Profile_photon_SCPt_vs_Pt -> Fill(photon.pt, photon.SC_pt, eventWeight);
 	  h_photon_SCPt_vs_Pt         -> Fill(photon.pt, photon.SC_pt, eventWeight);
+
+	  Profile_CorrOverRaw_vs_RawPt_eta0013 -> Fill(firstRawJet.pt, respCorrOverRaw , eventWeight);
+	  Profile_CorrOverRaw_vs_CorrPt_eta0013 -> Fill(firstJet.pt,        respCorrOverRaw , eventWeight);
+
 	}
 	
 	//fill N vertices as a function of eta/pT
@@ -914,10 +942,10 @@ void GammaJetFinalizer::runAnalysis() {
           vertex_responseBalancing[etaBin][vertexBin] -> Fill(respBalancing, eventWeight);
           vertex_responseMPF[etaBin][vertexBin]         -> Fill(respMPF, eventWeight);
         }
-
-	double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
-	//	if(TotEne > 1 || TotEne < 0) continue;
-	std::cout<< "Tot En = "<< TotEne << std::endl;
+	
+	// double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
+	// if(TotEne > 1 || TotEne < 0) continue;
+	// std::cout<< "Tot En = "<< TotEne << std::endl;
 
 	//fill jet energy composition histo vectors
 	ChHadronFraction[etaBin][ptBin]->Fill(firstJet.jet_CHEnF, eventWeight);

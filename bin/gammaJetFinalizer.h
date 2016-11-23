@@ -232,6 +232,8 @@ class GammaJetFinalizer
     float respPhotGamma;
     float respGenPhot;
      
+    float respCorrOverRaw;
+
      // Triggers on data
      Triggers* mTriggers;
      MCTriggers* mMCTriggers;

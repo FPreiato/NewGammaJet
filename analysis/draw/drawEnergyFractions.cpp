@@ -15,6 +15,8 @@
 #include "etaBinning.h"
 #include "ptBinning.h"
 
+bool pdf_aussi = true;
+
 int main(int argc, char* argv[]) {
 
   if (argc != 5) {
@@ -198,6 +200,8 @@ int main(int argc, char* argv[]) {
       }else{
 	hsum[i]->Draw();
       }
+
+      if(pdf_aussi) c->SaveAs(outputDir+"/"+type+"_"+stackName+".pdf");
       c->SaveAs(outputDir+"/"+type+"_"+stackName+".png");
       c->Destructor();
 	 
@@ -244,9 +248,12 @@ int main(int argc, char* argv[]) {
     }else{
       histoName = TString::Format("JetEnergyComposition_%s", etaBinning.getBinName(i).c_str());
     }
+
     h_data=(THStack*)data->Get(histoName);
     h_mc=(THStack*)mcFile->Get(histoName);
-    
+
+    TLegend *leg = new TLegend(0.20 , 0.1, 0.50, 0.40);
+
     TCanvas *c = new TCanvas("c","c",800,800);    
 
     // Data / MC comparison
@@ -264,13 +271,8 @@ int main(int argc, char* argv[]) {
     pad_lo->SetTopMargin(1.);
     pad_lo->SetBottomMargin(0.3);
     pad_lo->Draw();
-     
-    pad_hi -> cd();  
-    h_mc->GetYaxis()->SetTitle("PF Energy Fraction");
-    h_mc->GetYaxis()-> SetNdivisions(511);
-    h_mc-> GetXaxis()->SetLabelColor(kWhite);
-    h_mc->Draw("hist");
-    h_data->Draw("same");
+    ////////////////////////////////////     
+
     pad_lo->cd();
      
     for(int frac=0; frac<5; frac++) {
@@ -299,39 +301,71 @@ int main(int argc, char* argv[]) {
 	  histoNameEnFrac = TString::Format("MuFraction_%s", etaBinning.getBinName(i).c_str());
 	}
       }
-	h_dataEnFrac = (TH1F*)data->Get(histoNameEnFrac);
-	h_mcEnFrac = (TH1F*)mcFile->Get(histoNameEnFrac);
+    
+      h_dataEnFrac = (TH1F*)data->Get(histoNameEnFrac);
+      h_mcEnFrac = (TH1F*)mcFile->Get(histoNameEnFrac);
        
-	TH1D *h_diff = (TH1D*)h_dataEnFrac->Clone("h_diff");
-	h_diff->Add(h_mcEnFrac, -1);
-	h_diff->Scale(100);
-	if(frac==0){
-	  h_diff->GetXaxis()->SetLabelSize(0.085);
-	  h_diff->GetYaxis()->SetLabelSize(0.07);
-	  h_diff->GetYaxis()->SetTitleOffset(0.50);
-	  h_diff->GetXaxis()->SetTitleSize(0.09);
-	  h_diff->GetYaxis()->SetTitleSize(0.07);	 	 
-	  h_diff -> SetTitle("");
-	  h_diff-> GetXaxis()->SetMoreLogLabels();
-	  h_diff-> GetXaxis()->SetNoExponent();
-	  h_diff-> GetYaxis()->SetNdivisions(508);
-	  h_diff -> SetYTitle("Data - MC (%)");
-	  h_diff -> SetXTitle("p_{T} [GeV]");
-	  h_diff -> SetStats(kFALSE);
-	  h_diff -> SetMarkerColor(2);
-	  h_diff -> GetYaxis()->SetRangeUser(-10., 10.);
-	  h_diff -> Draw();
-	}else{
-	  if(frac==1) h_diff->SetMarkerColor(8);
-	  if(frac==2) h_diff->SetMarkerColor(4);
-	  if(frac==3) h_diff->SetMarkerColor(6);
-	  if(frac==4) h_diff->SetMarkerColor(7);
-	  h_diff -> Draw("same");
+      TH1D *h_diff = (TH1D*)h_dataEnFrac->Clone("h_diff");
+      h_diff->Add(h_mcEnFrac, -1);
+      h_diff->Scale(100);
+      if(frac==0){
+	h_diff->GetXaxis()->SetLabelSize(0.085);
+	h_diff->GetYaxis()->SetLabelSize(0.07);
+	h_diff->GetYaxis()->SetTitleOffset(0.50);
+	h_diff->GetXaxis()->SetTitleSize(0.09);
+	h_diff->GetYaxis()->SetTitleSize(0.07);	 	 
+	h_diff -> SetTitle("");
+	h_diff-> GetXaxis()->SetMoreLogLabels();
+	h_diff-> GetXaxis()->SetNoExponent();
+	h_diff-> GetYaxis()->SetNdivisions(508);
+	h_diff -> SetYTitle("Data - MC (%)");
+	h_diff -> SetXTitle("p_{T} [GeV]");
+	h_diff -> SetStats(kFALSE);
+	h_diff -> SetMarkerColor(2);	
+	h_diff -> SetLineColor(2);
+	h_diff -> GetYaxis()->SetRangeUser(-10., 10.);
+	// federico -- da togliere
+	h_diff->GetXaxis()-> SetRangeUser(175, 2500);
+	h_diff -> Draw();
+
+	leg -> AddEntry(h_diff, "Charged Hadron En. Frac.", "PL");
+      }else{
+	if(frac==1){
+	  h_diff->SetMarkerColor(8);
+	  h_diff->SetLineColor(8);
+	  leg -> AddEntry(h_diff, "Neutral Hadron En. Frac.", "PL");
+	}else if(frac==2){
+	  h_diff->SetMarkerColor(4);
+	  h_diff->SetLineColor(4);
+	  leg -> AddEntry(h_diff, "Charged Electromagnetic En. Frac.", "PL");
+	}else if(frac==3){
+	  h_diff->SetMarkerColor(6);
+	  h_diff->SetLineColor(6);
+	  leg -> AddEntry(h_diff, "Neutral Electromagnetic En. Frac.", "PL");
+	}else if(frac==4){
+	  h_diff->SetMarkerColor(7);
+	  h_diff->SetLineColor(7);
+	  leg -> AddEntry(h_diff, "Muon En. Frac.", "PL");
 	}
+
+	h_diff -> Draw("same");
       }
-     
-      c->SaveAs(outputDir+"/dataMC_"+histoName+".png");
-      c->Destructor();
+    }
+    
+
+    pad_hi -> cd();  
+    h_mc->GetYaxis()->SetTitle("PF Energy Fraction");
+    h_mc->GetYaxis()-> SetNdivisions(511);
+    h_mc-> GetXaxis()->SetLabelColor(kWhite);
+    //federico -- da togliere
+    h_mc->GetXaxis()-> SetRangeUser(175, 2500);
+    h_mc->Draw("hist");
+    h_data->Draw("same");
+    leg -> Draw();
+
+    if(pdf_aussi) c->SaveAs(outputDir+"/dataMC_"+histoName+".pdf");
+    c->SaveAs(outputDir+"/dataMC_"+histoName+".png");
+    c->Destructor();
      
   }// eta bins
 

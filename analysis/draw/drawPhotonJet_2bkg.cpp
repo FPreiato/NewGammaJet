@@ -40,7 +40,8 @@ int main(int argc, char* argv[]) {
   if(recoType == "PFlow") postFix += "chs";
   
   drawBase* db = new drawBase("PhotonJet", recoType, jetAlgo, OUTPUT_GRAPHS);
-  db->set_pdf_aussi((bool)false);
+  // federico -- true/false plots in pdf
+  db->set_pdf_aussi((bool)true);
   db->set_isCMSArticle(false);
 
   TString dataFileName;
@@ -108,8 +109,8 @@ int main(int argc, char* argv[]) {
   db->set_rebin(1);
 
   // Data/MC comparison
+ 
   db->drawHisto("ptPhoton_NoCut", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
-
   db->drawHisto("ptPhoton", "Photon Transverse Momentum", "GeV", "Events", log, 1, "", false, 50);
   db->drawHisto("EtaPhoton", "Photon Eta", " ", "Events" , log);
   db->drawHisto("PhiPhoton", "Photon Phi", " ", "Events" , false);
@@ -144,20 +145,25 @@ int main(int argc, char* argv[]) {
   db->drawHisto("deltaPhi_passedID", "#Delta #varphi", "", "Events", log);  
   db->drawHisto("hadTowOverEm", "H/E", "", "Events", log);
   db->drawHisto("sigmaIetaIeta", "#sigma_{i#eta i#eta}", "", "Events", log);
-  db->drawHisto("rho", "#rho", "", "Events", log);
+  db->drawHisto("rho", "#rho", "", "Events", log); 
   db->drawHisto("chargedHadronsIsolation", "Charged hadrons isolation", "", "Events", log);
   db->drawHisto("neutralHadronsIsolation", "Neutral hadrons isolation", "", "Events", log);
   db->drawHisto("photonIsolation", "Photon isolation", "", "Events", log);
+  db->drawHisto("R9", "R9", "", "Events", log);
   db->drawHisto("hadTowOverEm_passedID", "H/E", "", "Events", log);
   db->drawHisto("sigmaIetaIeta_passedID", "#sigma_{i#eta i#eta}", "", "Events", log);
   db->drawHisto("rho_passedID", "#rho", "", "Events", log);
   db->drawHisto("chargedHadronsIsolation_passedID", "Charged hadrons isolation", "", "Events", log);
   db->drawHisto("neutralHadronsIsolation_passedID", "Neutral hadrons isolation", "", "Events", log);
   db->drawHisto("photonIsolation_passedID", "Photon isolation", "", "Events", log);
+  db->drawHisto("R9_passedID", "R9", "", "Events", log);
 
   db->drawProfile("PhotSCPt", "Pt", "p_{T} [GeV]", "p_{T}(SC) [GeV]", log, 0);
   db->drawHisto2D("PhotonSCPt_vs_Pt", "p_{T} [GeV]", "p_{T}(SC) [GeV]","", log);
- 
+  
+  db->drawProfile("CorrOverRaw", "RawPt_eta0013", "Raw p_{T} [GeV]", "Corr/Raw", log, 0);
+  db->drawProfile("CorrOverRaw", "CorrPt_eta0013", "p_{T} [GeV]", "Corr/Raw", log, 0);
+
   db->set_rebin(5);
   db->setOutputGraphs(OUTPUT_GRAPHS);
 

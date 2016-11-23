@@ -208,7 +208,7 @@ drawBase::drawBase(const std::string& analysisType, const std::string& recoType,
 
   poissonAsymmErrors_ = false;
 
-  pdf_aussi_ = false;
+  pdf_aussi_ = true;
   noStack_ = false;
   isCMSArticle_ = true;
 
@@ -696,13 +696,20 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     //    c1->SaveAs(canvName_eps.c_str());
     std::string canvName_png = canvName + ".png";
     c1->SaveAs(canvName_png.c_str());
+    std::string canvName_pdf = canvName + ".pdf";
+    if (pdf_aussi_) {
+      c1->SaveAs(canvName_pdf.c_str());
+    }
   }
   
   //  std::string canvName_fit_eps = canvName + "_FITLINE.eps";
   //  c1->SaveAs(canvName_fit_eps.c_str());
   std::string canvName_fit_png = canvName + "_FITLINE.png";
   c1->SaveAs(canvName_fit_png.c_str());
-
+  std::string canvName_fit_pdf = canvName + "_FITLINE.pdf";
+  if (pdf_aussi_) {
+    c1->SaveAs(canvName_fit_pdf.c_str());
+  }
   // ----------------------------------------------------
   //             and now resolutions:
   // ----------------------------------------------------
@@ -874,6 +881,10 @@ void drawBase::drawHisto_vs_pt(std::vector<std::pair<float, float> > ptBins, std
     //    c1->SaveAs(canvName_eps.c_str());
     std::string canvName_png = canvName + ".png";
     c1->SaveAs(canvName_png.c_str());
+    std::string canvName_pdf = canvName + ".pdf";
+    if (pdf_aussi_) {
+      c1->SaveAs(canvName_pdf.c_str());
+    }
   }
   
   delete h2_axes;
@@ -1007,11 +1018,19 @@ void drawBase::drawHistoGen_vs_pt(std::vector<std::pair<float, float> > ptBins, 
   if (noMC) {
     std::string canvName_png = canvName + ".png";
     c1->SaveAs(canvName_png.c_str());
+    std::string canvName_pdf = canvName + ".pdf";
+    if (pdf_aussi_) {
+      c1->SaveAs(canvName_pdf.c_str());
+    }
   }
   
   std::string canvName_fit_png = canvName + "_FITLINE.png";
   c1->SaveAs(canvName_fit_png.c_str());
- 
+  std::string canvName_fit_pdf = canvName + "_FITLINE.pdf";
+  if (pdf_aussi_) {
+    c1->SaveAs(canvName_fit_pdf.c_str());
+  } 
+
   delete h2_axes;
   h2_axes = 0;
   delete c1;
@@ -1353,12 +1372,20 @@ void drawBase::drawHisto_vs_eta(std::vector<std::pair<float, float> > etaBins, c
     //    c1->SaveAs(canvName_eps.c_str());
     std::string canvName_png = canvName + ".png";
     c1->SaveAs(canvName_png.c_str());
+    std::string canvName_pdf = canvName + ".pdf";
+    if (pdf_aussi_) {
+      c1->SaveAs(canvName_pdf.c_str());
+    }
   }
 
   //  std::string canvName_fit_eps = canvName + "_FITLINE.eps";
   //  c1->SaveAs(canvName_fit_eps.c_str());
   std::string canvName_fit_png = canvName + "_FITLINE.png";
   c1->SaveAs(canvName_fit_png.c_str());
+  std::string canvName_fit_pdf = canvName + "_FITLINE.pdf";
+  if (pdf_aussi_) {
+    c1->SaveAs(canvName_fit_pdf.c_str());
+  }
 
 
   delete h2_axes;
@@ -1472,6 +1499,10 @@ void drawBase::drawHisto2D_fromHistos(std::vector<TH2*> dataHistos, std::vector<
       std::cout << "Saved " << canvasName << std::endl;
       std::string canvasName_png = canvasName + ".png";
       cData->SaveAs(canvasName_png.c_str());
+      std::string canvasName_pdf = canvasName + ".pdf";
+      if (pdf_aussi_) {
+        cData->SaveAs(canvasName_pdf.c_str());
+      }
     } 
   }
 
@@ -1501,6 +1532,10 @@ void drawBase::drawHisto2D_fromHistos(std::vector<TH2*> dataHistos, std::vector<
       std::cout << "Saved " << canvasName << std::endl;
       std::string canvasName_png = canvasName + ".png";
       cMC->SaveAs(canvasName_png.c_str());
+      std::string canvasName_pdf = canvasName + ".pdf";
+      if (pdf_aussi_) {
+        cMC->SaveAs(canvasName_pdf.c_str());
+      }
     }
   }
   
@@ -2160,10 +2195,10 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     std::cout << "Saved " << canvasName << std::endl;
     //    std::string canvasName_eps = canvasName + ".eps";
     //    c1->SaveAs(canvasName_eps.c_str());
+    // std::string canvasName_root = canvasName + ".root";
+    // c1->SaveAs(canvasName_root.c_str());
     std::string canvasName_png = canvasName + ".png";
-    //    std::string canvasName_root = canvasName + ".root";
     c1->SaveAs(canvasName_png.c_str());
-    //c1->SaveAs(canvasName_root.c_str());
     std::string canvasName_pdf = canvasName + ".pdf";
     if (pdf_aussi_) {
       c1->SaveAs(canvasName_pdf.c_str());
@@ -2196,9 +2231,10 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
         if (dataHistos[iHisto]->GetBinContent(iBin) > 0. && dataHistos[iHisto]->GetBinContent(iBin) < yMin_log) {
           yMin_log = dataHistos[iHisto]->GetBinContent(iBin);
         }
+    // questo si
     TH2D* h2_axes_log = new TH2D("axes_log", "", nBinsx, xMin, xMax, 10, 0.1 * yMin_log, yAxisMaxScaleLog_ * yMax);
-    //// federico
-    ////    TH2D* h2_axes_log = new TH2D("axes_log", "", nBinsx, xMin, 1000, 10, 0.1, yAxisMaxScaleLog_ * yMax);
+    //// federico -- questo da togliere
+    //TH2D* h2_axes_log = new TH2D("axes_log", "", nBinsx, xMin, 0.8, 10, 0.1, yAxisMaxScaleLog_ * yMax);
 
     if (drawRatio) {
       h2_axes_log->GetXaxis()->SetTitleOffset(1.3);
@@ -2352,14 +2388,19 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     TProfile* mcProfile = static_cast<TProfile*>(mcGet(0, name.c_str()));
 
     if (dataProfile == 0 || mcProfile == 0) {
-      std::cout << "Didn't find profile '" << name << "'. Continuing." << std::endl;
+      std::cout << "Didn't find profile " << name << ". Continuing." << std::endl;
       return;
+    }else{
+      std::cout << "TProfile existing: " << name << std::endl;
     }
-
+    
     Float_t profile_xMin = dataProfile->GetXaxis()->GetXmin();
     Float_t profile_xMax = dataProfile->GetXaxis()->GetXmax();
     Float_t xMin = profile_xMin;
     Float_t xMax = profile_xMax;
+
+    std::cout << "xMin = " <<  xMin <<std::endl;
+    std::cout << "xMax = " <<  xMax <<std::endl;
 
     mcProfile -> SetMarkerStyle(24);
     mcProfile -> SetMarkerSize(1.5);
@@ -2376,12 +2417,14 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     Float_t plotMin = 0.;
     Float_t yAxisMaxScale_ = 1.5;
 
-    if(yVar == "Bal" || yVar == "MPF"){
+    if(yVar == "Bal" || yVar == "MPF" || yVar == "CorrOverRaw"){
       plotMin = 0.7;
       yAxisMaxScale_ = 1.2;
     }
 
-    std::cout<<xMin <<" "<< xMax<<std::endl;
+    std::cout << "yMin = " << plotMin <<std::endl;
+    std::cout << "yMax = " << plotMax <<std::endl;
+
     TH2D* h2_axes = new TH2D("axes", "", 10, xMin, xMax, 10, plotMin, yAxisMaxScale_ * plotMax);
     h2_axes->SetYTitle(YaxisName.c_str());
     h2_axes->GetYaxis()->SetTitleOffset(1.3);
@@ -2392,7 +2435,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     h2_axes_lo->SetYTitle("Data / MC");
     h2_axes_lo->GetXaxis()->SetTitleOffset(1.2);
     h2_axes_lo->GetYaxis()->SetTitleOffset(0.55);
-    if (xVar == "Pt"){
+    if(xVar == "Pt" || xVar== "RawPt_eta0013" || xVar=="CorrPt_eta0013"){
       h2_axes_lo->GetXaxis()->SetMoreLogLabels();
       h2_axes_lo->GetXaxis()->SetNoExponent();
     }
@@ -2466,10 +2509,12 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     h1->Draw("Psame");    
 
     if (outputGraphs_) {
-      std::string canvasName = outputdir_ + "/" + name;
       //      std::string canvasName_eps = canvasName + ".eps";
       //      c1->SaveAs(canvasName_eps.c_str());
+
+      std::string canvasName = outputdir_ + "/" + name;
       std::string canvasName_png = canvasName + ".png";
+      std::cout<< "Saving ... " << canvasName_png.c_str() << std::endl;
       c1->SaveAs(canvasName_png.c_str());
       std::string canvasName_pdf = canvasName + ".pdf";
       if (pdf_aussi_) {
@@ -4006,7 +4051,7 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
     data_clone->Divide(mc);
 
     //// federico
-    ////    data_clone -> GetXaxis() ->SetRangeUser(0, 1000);
+    //data_clone -> GetXaxis() ->SetRangeUser(0, 0.8);
 
     //TString eq = TString::Format("[1] * (x - %f) + [0]", data->GetXaxis()->GetBinLowEdge(1));
 
@@ -4547,6 +4592,10 @@ void drawBase::drawHisto_fromHistos(std::vector<TH1*> dataHistos, std::vector<TH
   //  c1->SaveAs(canvName_fit_eps.c_str());
   std::string canvName_fit_png = canvName + "_FITLINE.png";
   c1->SaveAs(canvName_fit_png.c_str());
+  std::string canvName_fit_pdf = canvName + "_FITLINE.pdf";
+  if (pdf_aussi_) {
+    c1->SaveAs(canvName_fit_pdf.c_str());
+  }
 
   // ----------------------------------------------------
   //             and now resolutions:

@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
     //    algoType = postfix;
 
     drawExtrap* db = new drawExtrap("PhotonJet", recoType, jetAlgo, true);
-    db->set_pdf_aussi(false);
+    db->set_pdf_aussi(true);
     db->set_isCMSArticle(false);
 
     db->set_FITRMS(resoArg.getValue());

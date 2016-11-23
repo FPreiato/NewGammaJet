@@ -1,0 +1,3 @@
+/SinglePhoton/Run2016F-PromptReco-v1/MINIAOD -1 100 80X_dataRun2_Prompt_v8
+/SinglePhoton/Run2016G-PromptReco-v1/MINIAOD -1 100 80X_dataRun2_Prompt_v8
+/SinglePhoton/Run2016H-PromptReco-v2/MINIAOD -1 100 80X_dataRun2_Prompt_v8

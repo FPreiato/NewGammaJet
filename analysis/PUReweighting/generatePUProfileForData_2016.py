@@ -23,7 +23,8 @@ if not os.path.exists(Cert_json):
 
 outputROOT = "pu_truth_data2016_100bins.root"
 
-pileup_latest = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt"
+#pileup_latest = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt" #non raggiunge piu afs
+pileup_latest = "pileup_latest.txt"
  
 print("\tRunning pileupCalc...")
 cmd= "pileupCalc.py -i "+Cert_json+" --inputLumiJSON "+pileup_latest+" --calcMode true --minBiasXsec 71300 --maxPileupBin 100 --numPileupBins 100 "+outputROOT

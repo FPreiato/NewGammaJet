@@ -23,6 +23,15 @@ if not os.path.exists(Cert_json):
 
 outputROOT = "pu_truth_data2016_100bins.root"
 
+#dowload the very latest pileup file
+print("\tDownloading the latest pileup file")
+cmd1="rm pileup_latest.txt"
+cmd2="wget https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/PileUp/pileup_latest.txt"
+print(cmd2)
+
+os.system(cmd1)
+os.system(cmd2)
+
 #pileup_latest = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt" #non raggiunge piu afs
 pileup_latest = "pileup_latest.txt"
  

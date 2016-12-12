@@ -8,6 +8,7 @@
 #include <TH2D.h>
 #include <TLorentzVector.h>
 
+
 #include <fstream>
 #include <sstream>
 #include <signal.h>
@@ -942,7 +943,7 @@ void GammaJetFinalizer::runAnalysis() {
           vertex_responseBalancing[etaBin][vertexBin] -> Fill(respBalancing, eventWeight);
           vertex_responseMPF[etaBin][vertexBin]         -> Fill(respMPF, eventWeight);
         }
-	
+
 	// double TotEne = firstRawJet.jet_CHEnF + firstRawJet.jet_NHEnF + firstRawJet.jet_CEmEnF + firstRawJet.jet_NEmEnF + firstRawJet.jet_MuEnF;
 	// if(TotEne > 1 || TotEne < 0) continue;
 	// std::cout<< "Tot En = "<< TotEne << std::endl;

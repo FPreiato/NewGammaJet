@@ -60,6 +60,13 @@
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 
+/*Our recommendation is to use these corrections for both electrons and photons. Just replace electron-> with photon-> */
+#include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
+#include "DataFormats/DetId/interface/DetId.h"
+#include "DataFormats/EcalDetId/interface/EBDetId.h"
+#include "DataFormats/EcalDetId/interface/EEDetId.h"
+////////////////////////////////
+
 #include <TParameter.h>
 #include <TTree.h>
 #include <TClonesArray.h>
@@ -143,6 +150,7 @@ private:
   edm::EDGetTokenT<double> rhoToken_;
   edm::EDGetTokenT<std::vector<PileupSummaryInfo>> PUInfoToken_;
   edm::EDGetTokenT<edm::ValueMap<float> > qgToken_; 
+  edm::EDGetTokenT<EcalRecHitCollection> ebrechitsToken_ ;
   
   // Events Counter
   int Event_Initial =0 ;
@@ -281,10 +289,15 @@ GammaJetFilter::GammaJetFilter(const edm::ParameterSet& iConfig):
 		  (iConfig.getParameter<edm::InputTag>("electronsTag"))),
   muonsToken_(consumes<pat::MuonCollection>
 	      (iConfig.getParameter<edm::InputTag>("muonsTag"))),
+
   rhoToken_(consumes<double>
 	    (iConfig.getParameter<edm::InputTag>("rhoTag"))),
+
   PUInfoToken_(consumes<std::vector<PileupSummaryInfo>>
-	       (iConfig.getParameter<edm::InputTag>("PUInfoTag")))
+	       (iConfig.getParameter<edm::InputTag>("PUInfoTag"))),
+
+  ebrechitsToken_(consumes<EcalRecHitCollection>
+		  (iConfig.getParameter<edm::InputTag>("barrelRecHitCollectionTag")))
 {
   
   mIsMC = iConfig.getUntrackedParameter<bool>("isMC", "false");
@@ -905,7 +918,8 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
   // See https://indico.cern.ch/getFile.py/access?contribId=1&resId=0&materialId=slides&confId=174324 slide 4    
   
   if(mVerbose) std::cout<<"rawMet: "<< rawMet.pt() << " "<< rawMet.eta() << " " << rawMet.phi() << " " << rawMet.et() <<std::endl; 
-  
+
+  /*
   if(algo==PUPPI){ 
     float rawMetPx = rawMet.px();
     float rawMetPy = rawMet.py();
@@ -915,8 +929,8 @@ void GammaJetFilter::correctMETWithTypeI(pat::MET& rawMet, pat::MET& met, const 
     double rawMetPt = sqrt( rawMetPx * rawMetPx + rawMetPy * rawMetPy );
     rawMet.setP4(reco::Candidate::LorentzVector(rawMetPx, rawMetPy, 0., rawMetPt));
   }
-  
-  if(mVerbose) std::cout<<"NEW rawMet: "<< rawMet.pt() << " "<< rawMet.eta() << " " << rawMet.phi() << " " << rawMet.et() <<std::endl; 
+*/  
+  //  if(mVerbose) std::cout<<"NEW rawMet: "<< rawMet.pt() << " "<< rawMet.eta() << " " << rawMet.phi() << " " << rawMet.et() <<std::endl; 
   
   double deltaPx = 0., deltaPy = 0.;
   
@@ -1582,6 +1596,26 @@ void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& 
   // std::cout<<"Photon Phi = "<< photon.phi() << std::endl;
   // std::cout<<"Photon En = "<< photon.energy() << std::endl;
 
+  edm::Handle<EcalRecHitCollection> _ebrechits;
+  event.getByToken( ebrechitsToken_ , _ebrechits);    
+  
+  DetId detid = photonRef->superCluster()->seed()->seed();
+  const EcalRecHit * rh = NULL;
+  float Ecorr=1;
+  if (detid.subdetId() == EcalBarrel) {
+    auto rh_i =  _ebrechits->find(detid);
+    if( rh_i != _ebrechits->end()) rh =  &(*rh_i);
+    else rh = NULL;
+  } 
+  if(rh==NULL) Ecorr=1;
+  else{
+    if(       rh->energy()>200 && rh->energy()<300) Ecorr = 1.0199;
+    else if(rh->energy()>300 && rh->energy()<400) Ecorr = 1.052;
+    else if(rh->energy()>400 && rh->energy()<500) Ecorr = 1.015;
+  }
+  
+  //  std::cout<< "Ecorr = " << Ecorr << std::endl;
+
   int pho_is_present =1;
   float pho_et = photon.et();
   float pho_pt = photon.pt();
@@ -1663,6 +1697,8 @@ void GammaJetFilter::photonToTree(const pat::PhotonRef& photonRef, pat::Photon& 
   updateBranch(mPhotonTree, &phoSC_eta, "SC_eta");
   updateBranch(mPhotonTree, &phoSC_phi, "SC_phi");
   updateBranch(mPhotonTree, &phoSC_e, "SC_e");
+
+  updateBranch(mPhotonTree, &Ecorr,"Ecorr");
 
   mPhotonTree->Fill();
   

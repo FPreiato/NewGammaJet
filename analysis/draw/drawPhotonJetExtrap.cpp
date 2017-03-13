@@ -137,6 +137,10 @@ int main(int argc, char* argv[]) {
     db->set_legendTitle("|#eta| < 1.3");
     db->drawResponseExtrap(ptMean, "eta0013", "|#eta| < 1.3", false);
 
+    //an other special case
+    db->set_legendTitle("|#eta| < 2.4");
+    db->drawResponseExtrap(ptMean, "eta0024", "|#eta| < 2.4", false);
+
     delete db;
   } catch (TCLAP::ArgException &e) {
     std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;

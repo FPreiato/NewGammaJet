@@ -202,6 +202,12 @@ int main(int argc, char* argv[]) {
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_eta0013", "Balancing Response", "", "Events", false);
   if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_raw_eta0013", "Balancing Response (raw jets)", "", "Events", false);
+
+
+  db->set_legendTitle("|#eta| < 2.4");
+  db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_eta0024", "Balancing Response", "", "Events", false);
+  if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_balancing_raw_eta0024", "Balancing Response (raw jets)", "", "Events", false);
+
   
   // MPF
   db->setFolder("analysis/mpf");
@@ -222,6 +228,10 @@ int main(int argc, char* argv[]) {
   db->set_legendTitle("|#eta| < 1.3");
   db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0013", "MPF Response", "", "Events", false);
   if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0013", "MPF Response (raw MET)", "", "Events", false);
+
+  db->set_legendTitle("|#eta| < 2.4");
+  db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_eta0024", "MPF Response", "", "Events", false);
+  if(RAW) db->drawHisto_vs_pt(ptBins, ptMean, "resp_mpf_raw_eta0024", "MPF Response (raw MET)", "", "Events", false);
 
 
   delete db;

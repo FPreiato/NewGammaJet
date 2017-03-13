@@ -146,6 +146,11 @@ int main(int argc, char* argv[]) {
   std::string etaBinTitle = "|#eta| #leq 1.3";
   draw_vs_pt_plots("response",   "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output);
   draw_vs_pt_plots("resolution", "eta0013", etaBinTitle, fit_rms, db, false, alphaCut, output);
+
+  //an other special case
+  etaBinTitle = "|#eta| #leq 2.4";
+  draw_vs_pt_plots("response",   "eta0024", etaBinTitle, fit_rms, db, false, alphaCut, output);
+  draw_vs_pt_plots("resolution", "eta0024", etaBinTitle, fit_rms, db, false, alphaCut, output);
   
   output->Close();
   output_raw->Close();
@@ -376,6 +381,7 @@ void draw_vs_pt_plots(const std::string& resp_reso, const std::string& etaRegion
   
   std::string fullEtaRegion;
   if (etaRegion == "eta0013") fullEtaRegion = "eta00_13";
+  else if (etaRegion == "eta0024") fullEtaRegion = "eta00_24";
   else if (etaRegion == "eta0008") fullEtaRegion = "eta00_08";
   else if (etaRegion == "eta0813") fullEtaRegion = "eta08_13";
   else if (etaRegion == "eta1319") fullEtaRegion = "eta13_19";

@@ -68,12 +68,12 @@ for j in range (0,1):
       outputname = "batch/submit_drawer_"+jetType+"_alphacut0"+str( int(alphacut*100) )+".src"
       outputfile = open(outputname,'w')
       outputfile.write('#!/bin/bash\n')
-      outputfile.write('export SCRAM_ARCH=slc6_amd64_gcc530\n')
+      #outputfile.write('export SCRAM_ARCH=slc6_amd64_gcc530\n')
       if j ==0:
         outputfile.write('cd '+pwd+'/PFlowJets/AlphaCut0'+str(int(alphacut*100))+' \n')
       if j ==1:
         outputfile.write('cd '+pwd+'/PUPPIJets/AlphaCut0'+str(int(alphacut*100))+' \n')
-      outputfile.write('eval `scramv1 runtime -sh`\n')
+      #outputfile.write('eval `scramv1 runtime -sh`\n')
       outputfile.write(command+"\n")
       outputfile.write(command2+"\n")
       outputfile.write(command3+"\n")
@@ -99,12 +99,12 @@ for j in range (0,1):
     outputname = "batch/submit_drawer_"+jetType+"_alphacut0"+str( int(alphacut*100) )+".src"
     outputfile = open(outputname,'w')
     outputfile.write('#!/bin/bash\n')
-    outputfile.write('export SCRAM_ARCH=slc6_amd64_gcc530\n')
+    #outputfile.write('export SCRAM_ARCH=slc6_amd64_gcc530\n')
     if j ==0:
       outputfile.write('cd '+pwd+'/PFlowJets/AlphaCut0'+str(int(alphacut*100))+' \n')
     if j ==1:
       outputfile.write('cd '+pwd+'/PUPPIJets/AlphaCut0'+str(int(alphacut*100))+' \n')
-    outputfile.write('eval `scramv1 runtime -sh`\n')
+    #outputfile.write('eval `scramv1 runtime -sh`\n')
     outputfile.write(command+"\n")
     outputfile.write(command2+"\n")
     outputfile.write(command3+"\n")

@@ -38,5 +38,6 @@
 
 # directory used by crab
 Output_Run2/
+Output_*/
 tuples/
 analysis/PUReweighting/ProcessedLumi*

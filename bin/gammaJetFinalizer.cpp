@@ -8,7 +8,6 @@
 #include <TH2D.h>
 #include <TLorentzVector.h>
 
-
 #include <fstream>
 #include <sstream>
 #include <signal.h>
@@ -408,16 +407,27 @@ void GammaJetFinalizer::runAnalysis() {
     responseBalancingGen = buildEtaPtVector<TH1F>(balancingDir, "resp_balancing_gen", 150, 0., 2.);
     responseBalancingGenEta013 = buildPtVector<TH1F>(balancingDir, "resp_balancing_gen", "eta0013", 150, 0., 2.);
   }
+  // adding response for |eta|<2.4
+  std::vector<TH1F*> responseBalancingEta024       = buildPtVector<TH1F>(balancingDir, "resp_balancing", "eta0024", 150, 0., 2.);
+  std::vector<TH1F*> responseBalancingRawEta024 = buildPtVector<TH1F>(balancingDir, "resp_balancing_raw", "eta0024", 150, 0., 2.);
+  std::vector<TH1F*> responseBalancingGenEta024;
+  if (mIsMC) {
+    responseBalancingGenEta024 = buildPtVector<TH1F>(balancingDir, "resp_balancing_gen", "eta0024", 150, 0., 2.);
+  }
 
   std::vector<std::vector<TH1F*> > responseBalancingGenPhot; // GenJet / photon
   std::vector<std::vector<TH1F*> > responseBalancingPhotGamma; // photon / GenPhoton
   std::vector<TH1F*> responseBalancingGenPhotEta013;
   std::vector<TH1F*> responseBalancingPhotGammaEta013;
+  std::vector<TH1F*> responseBalancingGenPhotEta024;
+  std::vector<TH1F*> responseBalancingPhotGammaEta024;
   if (mIsMC) {
     responseBalancingGenPhot = buildEtaPtVector<TH1F>(balancingDir, "resp_balancing_gen_phot", 150, 0., 2.);
     responseBalancingPhotGamma = buildEtaPtVector<TH1F>(balancingDir, "resp_balancing_photGamma", 150, 0., 2.);
     responseBalancingGenPhotEta013 = buildPtVector<TH1F>(balancingDir, "resp_balancing_gen_phot", "eta0013", 150, 0., 2.);
     responseBalancingPhotGammaEta013 = buildPtVector<TH1F>(balancingDir, "resp_balancing_photGamma", "eta0013", 150, 0., 2.);
+    responseBalancingGenPhotEta024 = buildPtVector<TH1F>(balancingDir, "resp_balancing_gen_phot", "eta0024", 150, 0., 2.);
+    responseBalancingPhotGammaEta024 = buildPtVector<TH1F>(balancingDir, "resp_balancing_photGamma", "eta0024", 150, 0., 2.);
   }
   
   // MPF
@@ -431,6 +441,14 @@ void GammaJetFinalizer::runAnalysis() {
   if (mIsMC) {
     responseMPFGen = buildEtaPtVector<TH1F>(mpfDir, "resp_mpf_gen", 150, 0., 2.);
     responseMPFGenEta013 = buildPtVector<TH1F>(mpfDir, "resp_mpf_gen", "eta0013", 150, 0., 2.);
+  }
+
+  // adding response for |eta|<2.4
+  std::vector<TH1F*> responseMPFEta024 = buildPtVector<TH1F>(mpfDir, "resp_mpf", "eta0024", 150, 0., 2.);
+  std::vector<TH1F*> responseMPFRawEta024 = buildPtVector<TH1F>(mpfDir, "resp_mpf_raw", "eta0024", 150, 0., 2.);
+  std::vector<TH1F*> responseMPFGenEta024;
+  if (mIsMC) {
+    responseMPFGenEta024 = buildPtVector<TH1F>(mpfDir, "resp_mpf_gen", "eta0024", 150, 0., 2.);
   }
   
   // vs number of vertices
@@ -475,6 +493,14 @@ void GammaJetFinalizer::runAnalysis() {
     extrap_responseBalancingGen = buildExtrapolationEtaVector<TH1F>(extrapDir, "extrap_resp_balancing_gen", extrapolationBins, extrapolationMin, extrapolationMax);
     extrap_responseBalancingGenEta013 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_balancing_gen", "eta0013", extrapolationBins, extrapolationMin, extrapolationMax);
   }
+  // adding extrapolation for |eta|<2.4
+  std::vector<std::vector<TH1F*> > extrap_responseBalancingEta024 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_balancing", "eta0024", extrapolationBins, extrapolationMin, extrapolationMax);
+  std::vector<std::vector<TH1F*> > extrap_responseBalancingRawEta024 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_balancing_raw", "eta0024", extrapolationBins, extrapolationMin, extrapolationMax);
+  std::vector<std::vector<TH1F*> > extrap_responseBalancingGenEta024;  
+  if (mIsMC) {
+    extrap_responseBalancingGenEta024 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_balancing_gen", "eta0024", extrapolationBins, extrapolationMin, extrapolationMax);
+  }
+
 
   ExtrapolationVectors<TH1F>::type extrap_responseMPF = buildExtrapolationEtaVector<TH1F>(extrapDir, "extrap_resp_mpf", extrapolationBins, extrapolationMin, extrapolationMax);
   ExtrapolationVectors<TH1F>::type extrap_responseMPFRaw = buildExtrapolationEtaVector<TH1F>(extrapDir, "extrap_resp_mpf_raw", extrapolationBins, extrapolationMin, extrapolationMax);
@@ -487,12 +513,21 @@ void GammaJetFinalizer::runAnalysis() {
     extrap_responseMPFGen = buildExtrapolationEtaVector<TH1F>(extrapDir, "extrap_resp_mpf_gen", extrapolationBins, extrapolationMin, extrapolationMax);
     extrap_responseMPFGenEta013 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_mpf_gen", "eta0013", extrapolationBins, extrapolationMin, extrapolationMax);
   }    
+  // adding extrapolation for |eta| <2.4
+  std::vector<std::vector<TH1F*> > extrap_responseMPFEta024 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_mpf", "eta0024", extrapolationBins, extrapolationMin, extrapolationMax);
+  std::vector<std::vector<TH1F*> > extrap_responseMPFRawEta024 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_mpf_raw", "eta0024", extrapolationBins, extrapolationMin, extrapolationMax);
+  std::vector<std::vector<TH1F*> > extrap_responseMPFGenEta024;
+  if (mIsMC) {
+    extrap_responseMPFGenEta024 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_mpf_gen", "eta0024", extrapolationBins, extrapolationMin, extrapolationMax);
+  }    
 
   ExtrapolationVectors<TH1F>::type extrap_responseBalancingGenPhot;
   std::vector<std::vector<TH1F*> > extrap_responseBalancingGenPhotEta013;
+  std::vector<std::vector<TH1F*> > extrap_responseBalancingGenPhotEta024;
   if (mIsMC) {
     extrap_responseBalancingGenPhot = buildExtrapolationEtaVector<TH1F>(extrapDir, "extrap_resp_balancing_gen_phot", extrapolationBins, extrapolationMin, extrapolationMax);
     extrap_responseBalancingGenPhotEta013 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_balancing_gen_phot", "eta0013", extrapolationBins, extrapolationMin, extrapolationMax);
+    extrap_responseBalancingGenPhotEta024 = buildExtrapolationVector<TH1F>(extrapDir, "extrap_resp_balancing_gen_phot", "eta0024", extrapolationBins, extrapolationMin, extrapolationMax);
   }
   
   // Luminosity
@@ -531,7 +566,7 @@ void GammaJetFinalizer::runAnalysis() {
   for (uint64_t i = from; i < to; i++) {     
       
     // test: skip bug events in MC
-    // if( i < 3160152) continue;
+    //if( i < 6953258 ) continue;
       
     if ( (i - from) < 10 || (i - from) % 50000 == 0) { //50000
       clock::time_point end = clock::now();
@@ -542,7 +577,7 @@ void GammaJetFinalizer::runAnalysis() {
     
     //bug in crab outputs -- skip events with bugs
     if( mIsMC ){ // bug in GJET Pythia
-      if( i == 469664 || i == 1201210 || i == 2605350 || i == 2983481 || i == 3160152) continue;
+      if( i == 299495 || i == 370340 || i == 808936 || i == 1054117 || i == 1081858 || i == 1312440 || i == 3900559 || i == 3984202 || i == 4234067 || i == 4455207 || i == 4504609 || i == 4766647 || i == 5829816 || i == 5876115 || i == 6873026 || i == 6953258 ) continue;
     }
     
     if (EXIT) {
@@ -977,6 +1012,14 @@ void GammaJetFinalizer::runAnalysis() {
 	  responseMPFEta013[ptBin]->Fill(respMPF, eventWeight);
 	  responseMPFRawEta013[ptBin]->Fill(respMPFRaw, eventWeight);
 	}
+	// An other special case
+	if (fabs(firstJet.eta) <2.4) {
+	  responseBalancingEta024[ptBin]->Fill(respBalancing, eventWeight);
+	  responseBalancingRawEta024[ptBin]->Fill(respBalancingRaw, eventWeight);
+	  responseMPFEta024[ptBin]->Fill(respMPF, eventWeight);
+	  responseMPFRawEta024[ptBin]->Fill(respMPFRaw, eventWeight);
+	}
+
         responseBalancing[etaBin][ptBin]->Fill(respBalancing, eventWeight);
         responseBalancingRaw[etaBin][ptBin]->Fill(respBalancingRaw, eventWeight);
         responseMPF[etaBin][ptBin]->Fill(respMPF, eventWeight);
@@ -989,6 +1032,12 @@ void GammaJetFinalizer::runAnalysis() {
 	    responseMPFGenEta013[ptBinGen]        ->Fill(respMPFGen, eventWeight);
 	    responseBalancingPhotGammaEta013[ptBinGen]  ->Fill(respPhotGamma, eventWeight);
 	    responseBalancingGenPhotEta013[ptBinGen]        ->Fill(respGenPhot, eventWeight);
+	  }
+	  if (fabs(firstGenJet.eta) <2.4) {
+	    responseBalancingGenEta024[ptBinGen] ->Fill(respBalancingGen, eventWeight);
+	    responseMPFGenEta024[ptBinGen]        ->Fill(respMPFGen, eventWeight);
+	    responseBalancingPhotGammaEta024[ptBinGen]  ->Fill(respPhotGamma, eventWeight);
+	    responseBalancingGenPhotEta024[ptBinGen]        ->Fill(respGenPhot, eventWeight);
 	  }
 	  responseBalancingGen[etaBinGen][ptBinGen]->Fill(respBalancingGen, eventWeight);
 	  responseMPFGen[etaBinGen][ptBinGen]->Fill(respMPFGen, eventWeight);
@@ -1050,6 +1099,11 @@ void GammaJetFinalizer::runAnalysis() {
             extrap_responseBalancingEta013[ptBin][extrapBin]->Fill(respBalancing, eventWeight);
             extrap_responseMPFEta013[ptBin][extrapBin]->Fill(respMPF, eventWeight);
 	  }
+          //An other special case 
+	  if (fabs(firstJet.eta) < 2.4) {
+            extrap_responseBalancingEta024[ptBin][extrapBin]->Fill(respBalancing, eventWeight);
+            extrap_responseMPFEta024[ptBin][extrapBin]->Fill(respMPF, eventWeight);
+	  }
           extrap_responseBalancing[etaBin][ptBin][extrapBin]->Fill(respBalancing, eventWeight);
           extrap_responseMPF[etaBin][ptBin][extrapBin]->Fill(respMPF, eventWeight);
 
@@ -1058,6 +1112,11 @@ void GammaJetFinalizer::runAnalysis() {
               extrap_responseBalancingGenEta013[ptBinGen][extrapGenBin] -> Fill(respBalancingGen, eventWeight);
               extrap_responseMPFGenEta013[ptBinGen][extrapGenBin]         -> Fill(respMPFGen, eventWeight);
 	      extrap_responseBalancingGenPhotEta013[ptBinGen][extrapGenBin]  -> Fill(respGenPhot, eventWeight);
+	    }
+	    if (fabs(firstGenJet.eta) < 2.4) {
+              extrap_responseBalancingGenEta024[ptBinGen][extrapGenBin] -> Fill(respBalancingGen, eventWeight);
+              extrap_responseMPFGenEta024[ptBinGen][extrapGenBin]         -> Fill(respMPFGen, eventWeight);
+	      extrap_responseBalancingGenPhotEta024[ptBinGen][extrapGenBin]  -> Fill(respGenPhot, eventWeight);
 	    }
 	    extrap_responseBalancingGen[etaBinGen][ptBinGen][extrapGenBin] -> Fill(respBalancingGen, eventWeight);
             extrap_responseMPFGen[etaBinGen][ptBinGen][extrapGenBin]         -> Fill(respMPFGen, eventWeight);
@@ -1077,6 +1136,11 @@ void GammaJetFinalizer::runAnalysis() {
 	  if (fabs(firstJet.eta) < 1.305) {
             extrap_responseBalancingRawEta013[ptBin][rawExtrapBin]->Fill(respBalancingRaw, eventWeight);
             extrap_responseMPFRawEta013[ptBin][rawExtrapBin]->Fill(respMPFRaw, eventWeight);
+          }	  
+          //An other special case 
+	  if (fabs(firstJet.eta) < 2.4) {
+            extrap_responseBalancingRawEta024[ptBin][rawExtrapBin]->Fill(respBalancingRaw, eventWeight);
+            extrap_responseMPFRawEta024[ptBin][rawExtrapBin]->Fill(respMPFRaw, eventWeight);
           }	  
           extrap_responseBalancingRaw[etaBin][ptBin][rawExtrapBin]->Fill(respBalancingRaw, eventWeight);
           extrap_responseMPFRaw[etaBin][ptBin][rawExtrapBin]->Fill(respMPFRaw, eventWeight);

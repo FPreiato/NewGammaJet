@@ -530,7 +530,7 @@ void GammaJetFinalizer::runAnalysis() {
   for (uint64_t i = from; i < to; i++) {     
       
     // test: skip bug events in MC
-    // if( i < 3160152) continue;
+    //if( i < 6953258 ) continue;
       
     if ( (i - from) < 10 || (i - from) % 50000 == 0) { //50000
       clock::time_point end = clock::now();
@@ -541,7 +541,7 @@ void GammaJetFinalizer::runAnalysis() {
     
     //bug in crab outputs -- skip events with bugs
     if( mIsMC ){ // bug in GJET Pythia
-      if( i == 469664 || i == 1201210 || i == 2605350 || i == 2983481 || i == 3160152) continue;
+      if( i == 299495 || i == 370340 || i == 808936 || i == 1054117 || i == 1081858 || i == 1312440 || i == 3900559 || i == 3984202 || i == 4234067 || i == 4455207 || i == 4504609 || i == 4766647 || i == 5829816 || i == 5876115 || i == 6873026 || i == 6953258 ) continue;
     }
     
     if (EXIT) {

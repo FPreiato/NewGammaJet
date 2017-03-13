@@ -33,6 +33,7 @@ class PhotonTree: public BaseTree {
     Float_t         SC_eta; 
     Float_t         SC_phi; 
     Float_t         SC_e; 
+    Float_t         Ecorr; 
 
     // List of branches
     TBranch        *b_jet_area;
@@ -64,6 +65,7 @@ void PhotonTree::Init(TTree *tree)
   fChain->SetBranchAddress("SC_eta", &SC_eta, NULL);
   fChain->SetBranchAddress("SC_phi", &SC_phi, NULL);
   fChain->SetBranchAddress("SC_e", &SC_e, NULL);
+  fChain->SetBranchAddress("Ecorr", &Ecorr, NULL);
 
   BaseTree::InitCache();
 }

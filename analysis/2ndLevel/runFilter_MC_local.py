@@ -21,7 +21,7 @@ process.load('RecoJets.JetProducers.QGTagger_cfi')
 process.QGTagger.srcJets          = cms.InputTag('slimmedJets')
 process.QGTagger.jetsLabel       = cms.string('QGL_AK4PFchs') #see https://twiki.cern.ch/twiki/bin/viewauth/CMS/QGDataBaseVersion
 
-process.GlobalTag.globaltag = cms.string("80X_mcRun2_asymptotic_2016_v3")
+process.GlobalTag.globaltag = cms.string("80X_mcRun2_asymptotic_2016_miniAODv2_v1")
 
 process.load("JetMETCorrections.Configuration.JetCorrectionProducers_cff")
 process.load("RecoEgamma/PhotonIdentification/PhotonIDValueMapProducer_cfi")
@@ -31,7 +31,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 process.source = cms.Source (
     "PoolSource", 
     fileNames = cms.untracked.vstring(
-        'file:../tuples/GJet_Pythia_80X_file1.root'
+        'file:../tuples/GJet_Pythia_Summer16_file1.root'
         )
     )
 
@@ -66,6 +66,8 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 PUInfoTag = cms.InputTag("slimmedAddPileupInfo"),
                                 pfCands = cms.InputTag("packedPFCandidates"),
 
+                                barrelRecHitCollectionTag = cms.InputTag("reducedEgamma","reducedEBRecHits"),
+
                                 runOnPFAK4    = cms.untracked.bool(True),
                                 runOnPFAK8    = cms.untracked.bool(False),
                                 runOnPUPPIAK4    = cms.untracked.bool(True),
@@ -78,15 +80,15 @@ process.gammaJet = cms.EDFilter('GammaJetFilter',
                                 doJetCorrection = cms.untracked.bool(True),
                                 correctJecFromRaw = cms.untracked.bool(True),
 
-                                L1corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L1FastJet_AK4PFchs.txt'),
-                                L2corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L2Relative_AK4PFchs.txt'),
-                                L3corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L3Absolute_AK4PFchs.txt'),
-                                L1RCcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L1RC_AK4PFchs.txt'),
+                                L1corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Summer16_23Sep2016V1_MC/Summer16_23Sep2016V1_MC_L1FastJet_AK4PFchs.txt'),
+                                L2corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Summer16_23Sep2016V1_MC/Summer16_23Sep2016V1_MC_L2Relative_AK4PFchs.txt'),
+                                L3corr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Summer16_23Sep2016V1_MC/Summer16_23Sep2016V1_MC_L3Absolute_AK4PFchs.txt'),
+                                L1RCcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Summer16_23Sep2016V1_MC/Summer16_23Sep2016V1_MC_L1RC_AK4PFchs.txt'),
 
-                                L1PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L1FastJet_AK4PFPuppi.txt'),
-                                L2PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L2Relative_AK4PFPuppi.txt'),
-                                L3PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L3Absolute_AK4PFPuppi.txt'),
-                                L1RCPUPPIcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Spring16_25nsV6_MC/Spring16_25nsV6_MC_L1FastJet_AK4PFPuppi.txt')
+                                L1PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Summer16_23Sep2016V1_MC/Summer16_23Sep2016V1_MC_L1FastJet_AK4PFPuppi.txt'),
+                                L2PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Summer16_23Sep2016V1_MC/Summer16_23Sep2016V1_MC_L2Relative_AK4PFPuppi.txt'),
+                                L3PUPPIcorr_MC = cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Summer16_23Sep2016V1_MC/Summer16_23Sep2016V1_MC_L3Absolute_AK4PFPuppi.txt'),
+                                L1RCPUPPIcorr_MC =cms.FileInPath('JetMETCorrections/GammaJetFilter/data/Summer16_23Sep2016V1_MC/Summer16_23Sep2016V1_MC_L1FastJet_AK4PFPuppi.txt')
                                 
                                 )
 
